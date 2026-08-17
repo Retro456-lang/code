@@ -1,12 +1,13 @@
 {
   "name": "fullstack-backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "Backend server with Express, TypeScript, PostgreSQL, and JWT",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts"
+    "dev": "tsx watch src/index.ts"
   },
   "keywords": ["express", "typescript", "postgresql", "jwt"],
   "author": "",

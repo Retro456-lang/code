@@ -1,6 +1,6 @@
-import { app } from './app';
-import { ENV } from './config/env';
-import { pool } from './config/db';
+import { app } from './app.js';
+import { ENV } from './config/env.js';
+import { pool } from './config/db.js';
 
 async function start() {
   try {

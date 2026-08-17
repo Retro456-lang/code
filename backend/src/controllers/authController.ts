@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { pool } from '../config/db';
-import { ENV } from '../config/env';
+import { pool } from '../config/db.js';
+import { ENV } from '../config/env.js';
+import { error } from 'console';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -47,49 +48,88 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   }
 };
   
+// export const login = async (req: Request, res: Response): Promise<void> => {
+//   try {
+//     const { email, password } = req.body;
+
+//     if (!email || !password) {
+//       res.status(400).json({ error: 'please enter email and password.'})
+//       return;
+//     }
+//     // find user in db
+//     const userResult = await pool.query('select * from users where email = $1' , [email]);
+//     if (userResult.rows.length === 0) {
+//       res.status(401).json({error: 'invalid email or password.'});
+//       return;
+//     }
+//     const user = userResult.rows[0];
+
+//     // compare password i.e if its valid.
+//     const isPasswordValid = await bcrypt.compare(password, user.password_hash); // reblends behind the scenese 
+//     if (!isPasswordValid) {
+//       res.status(401).json({ error: 'invalid email or password'});
+//       return;
+//     }
+
+//     // generate jwt token a signed token string.
+//     const payload = { userId: user.id, email: user.email, role: user.role};
+//     const token = jwt.sign(payload, ENV.JWT_SECRET, {expiresIn: '24h'});
+
+//     res.status(200).json({
+//       message: 'Login successful',
+//       token,
+//       user: {
+//         id: user.id,
+//         email: user.email,
+//         full_name: user.full_name,
+//         role: user.role
+//       }
+//     });
+
+//   } catch (error) {
+//     console.error('login error:', error);
+//     res.status(500).json({ error: 'internal server error'});
+//   }
+  
+// };
+
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { email, password } = req.body;
+    const {email, password} = req.body;
 
-    if (!email || !password) {
-      res.status(400).json({ error: 'please enter email and password.'})
+    if(!email || !password){
+      res.status(400).json({error: "invalid email or password"})
       return;
     }
-    // find user in db
-    const userResult = await pool.query('select * from users where email = $1' , [email]);
-    if (userResult.rows.length === 0) {
-      res.status(401).json({error: 'invalid email or password.'});
+
+    const userResult = await pool.query('select * from users where email = $1', [email]);
+    if(userResult.rows.length === 0){
+      res.status(401).json({error: "invalid credentials!"})
       return;
-    }
+    } 
     const user = userResult.rows[0];
 
-    // compare password i.e if its valid.
-    const isPasswordValid = await bcrypt.compare(password, user.password_hash); // reblends behind the scenese 
-    if (!isPasswordValid) {
-      res.status(401).json({ error: 'invalid email or password'});
+    const isPasswordValid = await bcrypt.compare(password, user.password_hash)
+    if (!isPasswordValid){
+      res.status(401).json({error: "unauthorized error!"})
       return;
     }
 
-    // generate jwt token a signed token string.
-    const payload = { userId: user.id, email: user.email, role: user.role};
-    const token = jwt.sign(payload, ENV.JWT_SECRET, {expiresIn: '24h'});
+    const payload = {userId: user.id, email: user.email, role: user.role}
+    const token = jwt.sign(payload, ENV.JWT_SECRET, {expiresIn: '24h'})
 
     res.status(200).json({
-      message: 'Login successful',
+      message: "logged in successfully",
       token,
       user: {
         id: user.id,
         email: user.email,
-        full_name: user.full_name,
-        role: user.role
+        role: user.role,
+        full_name: user.full_name
       }
     });
-
-  } catch (error) {
-    console.error('login error:', error);
-    res.status(500).json({ error: 'internal server error'});
+  } catch(error){
+    console.error('internal error', error)
+    res.status(500).json({error: "internal server error"})
   }
-  
-};
-
-
+}

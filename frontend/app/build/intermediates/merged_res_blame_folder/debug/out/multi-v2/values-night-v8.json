@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.app-mergeDebugResources-31:/values-night-v8/values-night-v8.xml",
+            "outputFile": "com.example.app-mergeDebugResources-54:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
                     "source": "C:\\Users\\Sales\\.gradle\\caches\\transforms-3\\9da7ba67e3a8fa58b324ee0b34636051\\transformed\\material-1.11.0\\res\\values-night-v8\\values-night-v8.xml",

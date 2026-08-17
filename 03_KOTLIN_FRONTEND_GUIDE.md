@@ -299,3 +299,63 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
     }
 }
 ```
+
+``` kotlin
+package com.example.app.ui
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun LoginScreen(viewModel: AuthViewModel) {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        TextField(
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Email") }
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        TextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Password") }
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { viewModel.loginUser(email, password) }) {
+            Text("Log In")
+        }
+    }
+}
+
+``` kotlin
+package com.example.app
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import com.example.app.network.RetrofitClient
+import com.example.app.network.TokenManager
+import com.example.app.repository.AuthRepository
+import com.example.app.ui.AuthViewModel
+import com.example.app.ui.LoginScreen
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val tokenManager = TokenManager(applicationContext)
+        val apiService = RetrofitClient.create(tokenManager)
+        val repository = AuthRepository(apiService, tokenManager)
+        val viewModel = AuthViewModel(repository)
+
+        setContent {
+            LoginScreen(viewModel = viewModel)
+        }
+    }
+}
