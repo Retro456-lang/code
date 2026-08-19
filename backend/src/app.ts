@@ -5,6 +5,8 @@ import { userRouter } from './routes/userRoutes.js';
 
 export const app = express();
 
+app.set('trust proxy', 1) //for one user. each key
+
 app.use(cors());
 app.use(express.json());
 

@@ -26,6 +26,9 @@ data class AuthResponse(
     val user: UserDto?
 )
 
+data class SendOtpRequest(val email: String)
+data class VerifyOtpRequest(val email: String, val otp: String)
+
 data class UserProfileResponse(
     val profile: UserDto
 )

@@ -19,6 +19,12 @@ interface ApiService {
     suspend fun getProfile():
     Response<UserProfileResponse>
 
+    @POST("api/auth/send-otp")
+    suspend fun sendOtp(@Body request: SendOtpRequest): Response<AuthResponse>
+
+    @POST("api/auth/verify-otp")
+    suspend fun verifyOtp(@Body request: VerifyOtpRequest): Response<AuthResponse>
+
     @GET("api/dashboard")
     suspend fun getDashboard():
     Response<DashboardResponse>

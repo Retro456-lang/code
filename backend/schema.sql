@@ -23,6 +23,14 @@ CREATE TABLE user_dashboard_stats (
     learning_streak_days INT DEFAULT 1,
     last_active TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+-- create Refresh Tokens Table 
+create table refresh_tokens (
+	id serial primary key,
+	user_id int references users(id) on delete cascade,
+	token_hash varchar(255) not null,
+	expires_at timestamp not null,
+	created_at timestamp default current_timestamp
+);
 
 -- Create indexes for better query performance
 CREATE INDEX idx_users_email ON users(email);

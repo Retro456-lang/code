@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { pool } from '../config/db.js';
 import { AuthenticatedRequest } from '../types/index.js';
-import { profile } from 'console';
+import { error, profile } from 'console';
 
 
 // export const getProfile = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
@@ -30,20 +30,18 @@ export const getProfile = async (req: AuthenticatedRequest, res: Response): Prom
     const userId = req.user?.userId;
 
     const userResult = await pool.query(
-      'select id,email,full_name, role, created_at from users where id = $1',
+      'select id, email, full_name, role, created_at from users where id = $1',
       [userId]
     );
-  if (userResult.rows.length === 0) {
-    res.status(404).json({error: "user profile not found"});
-    return;
+    if (userResult.rows.length === 0) {
+      res.status(401).json({error: "user profile not found"});
+      return;
+    }
+    res.status(200).json({profile: userResult.rows[0]});
+  } catch (error) {
+    console.error('profile fetch error:', error);
+    res.status(500).json({error: "internal server error"});
   }
-
-  res.status(200).json({profile: userResult.rows[0]});
-
-} catch (error) {
-  console.error('profile fetch error', error);
-  res.status(500).json({ error: "internal server error"});
-}
 };
 
 // export const getDashboard = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
