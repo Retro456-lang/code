@@ -1,7 +1,7 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { pool } from '../config/db.js';
 import { AuthenticatedRequest } from '../types/index.js';
-import { error, profile } from 'console';
+
 
 
 // export const getProfile = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
@@ -25,16 +25,16 @@ import { error, profile } from 'console';
 //   }
 // };
 
-export const getProfile = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const getProfile = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = req.user?.userId;
+    const { userId } = (req as unknown as AuthenticatedRequest).user;
 
     const userResult = await pool.query(
       'select id, email, full_name, role, created_at from users where id = $1',
       [userId]
     );
     if (userResult.rows.length === 0) {
-      res.status(401).json({error: "user profile not found"});
+      res.status(404).json({error: "user profile not found"});
       return;
     }
     res.status(200).json({profile: userResult.rows[0]});
@@ -70,9 +70,9 @@ export const getProfile = async (req: AuthenticatedRequest, res: Response): Prom
 //   }
 // };
 
-export const getDashboard = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const getDashboard = async (req: Request, res: Response): Promise<void> => {
     try {
-        const userId = req.user?.userId;
+        const  { userId }= (req as unknown as AuthenticatedRequest).user;
 
         const statsResult = await pool.query(
            'select total_projects, completed_tasks, learning_streak_days, last_active from user_dashboard_stats where user_id = $1',

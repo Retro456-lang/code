@@ -1,14 +1,13 @@
-import { Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { ENV } from '../config/env.js';
 import { AuthenticatedRequest, UserPayload } from '../types/index.js';
 
 export const authenticateToken = (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ): void => {
-  // Step 1: Extract Authorization header ('Bearer <token>')
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
@@ -18,10 +17,8 @@ export const authenticateToken = (
   }
 
   try {
-    // Step 2: Verify token signature
     const decoded = jwt.verify(token, ENV.JWT_SECRET) as UserPayload;
-    // Step 3: Attach user payload to request
-    req.user = decoded;
+    (req as AuthenticatedRequest).user = decoded;
     next();
   } catch (error) {
     res.status(403).json({ error: 'Token is invalid or expired' });
